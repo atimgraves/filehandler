@@ -1,9 +1,13 @@
+REPO=lhr.ocir.io/frsxwtjslf35/jib-filewriter
 
 mvn package
-docker tag jib-filewriter:1.0.0 lhr.ocir.io/frsxwtjslf35/jib-filewriter:1.0.0
-docker push lhr.ocir.io/frsxwtjslf35/jib-filewriter:1.0.0
+docker build --tag $REPO/jib-filewriter:1.0.0  --file Dockerfile .
+docker push $REPO/jib-filewriter:1.0.0
 
-docker run --rm --publish 8080:8080 --volume $HOME/dataDirectory:/dataDirectory lhr.ocir.io/frsxwtjslf35/jib-filewriter:1.0.0
+
+
+
+docker run --rm --publish 8080:8080 --volume $HOME/dataDirectory:/app/dataDirectory lhr.ocir.io/frsxwtjslf35/jib-filewriter:1.0.0
 
 test upload (to local machine)
 

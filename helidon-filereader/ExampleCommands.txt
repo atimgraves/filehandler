@@ -1,0 +1,14 @@
+REPO=lhr.ocir.io/frsxwtjslf35/jib-filereader
+
+mvn package
+docker build --tag $REPO/jib-filereader:1.0.0  --file Dockerfile .
+docker push $REPO/jib-filereader:1.0.0
+
+
+
+
+docker run --rm --publish 8081:8081 --volume $HOME/dataDirectory:/app/dataDirectory lhr.ocir.io/frsxwtjslf35/jib-filereader:1.0.0
+
+test upload (to local machine)
+
+curl -X POST  -H "Content-Type: text/plain" http://localhost:8080/writer/file/test1.txt -d "File contents"
