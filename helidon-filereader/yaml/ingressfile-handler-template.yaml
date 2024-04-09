@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: filereader-direct-ingress
+spec:
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type=basic
+    nginx.ingress.kubernetes.io/auth-secret-type=auth-file
+    nginx.ingress.kubernetes.io/auth-secret=file-handler-auth
+    nginx.ingress.kubernetes.io/auth-realm"="Authentication Required"
+  tls:
+  - hosts: 
+    # ${EXTERNAL_IP} must be replaced with the IP address of the ingress controller
+    - filehandler.${EXTERNAL_IP}.nip.io
+    secretName: file-handler-auth
+  rules:
+    # ${EXTERNAL_IP} must be replaced with the IP address of the ingress controller
+  - host: filehandler.${EXTERNAL_IP}.nip.io
+    http:
+      paths:
+      - path: /reader
+        pathType: Prefix
+        backend:
+          service:
+            name: filehandler
+            port:
+              name: readerport
+      - path: /writer
+        pathType: Prefix
+        backend:
+          service:
+            name: filehandler
+            port:
+              name: writerport

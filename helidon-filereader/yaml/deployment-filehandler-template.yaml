@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filehandler
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: filehandler
+  template:
+    metadata:
+      labels:
+        app: filehandler
+    spec:
+      containers:
+      - name: filewriter
+        image: ${OCIR_LOCATION}/${OCIR_STORAGE_NAMESPACE}/jib-filewriter:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: writerport
+          containerPort: 8080
+        resources:
+          limits:
+            # Set this to be quarter of a CPU for now
+            cpu: "250m"
+        volumeMounts:
+        - name: dataDirectory
+          mountPath: /dataDirectory
+          readOnly: false
+      - name: filereader
+        image: ${OCIR_LOCATION}/${OCIR_STORAGE_NAMESPACE}/jib-filereader:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: readerport
+          containerPort: 8081
+        resources:
+          limits:
+            # Set this to be quarter of a CPU for now
+            cpu: "250m"
+        volumeMounts:
+        - name: dataDirectory
+          mountPath: /dataDirectory
+          readOnly: false
+      volumes:
+      - name: dataDirectory
+        hostPath:
+          path: /tmp
+          type: Directory
+#      imagePullSecrets:
+#      - name: my-docker-reg
